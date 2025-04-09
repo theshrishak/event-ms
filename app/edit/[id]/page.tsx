@@ -7,11 +7,15 @@ import Joi from 'joi';
 import { updateEvent, getEventById } from '@/services/event';
 import { validate } from '@/services/validate';
 
+interface EventEditPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
 
-export default function EventEditPage({ params }) {
+export default function EventEditPage({ params }: EventEditPageProps) {
   const [errors, setErrors] = useState({});
   const [event, setEvent] = useState({
-    id: null,
     title: "",
     date: "",
     location: "",
@@ -30,12 +34,14 @@ export default function EventEditPage({ params }) {
   const retrieveEvent = async () => {
     const { id } = await params;
     const _event =  await getEventById(id);
-    setEvent({
-      title: _event.title,
-      location: _event.location,
-      description: _event.description,
-      date: _event.date.toISOString().split('T')[0]
-    });
+    if(_event) {
+      setEvent({
+        title: _event.title,
+        location: _event.location,
+        description: _event.description,
+        date: _event.date?.toISOString().split('T')[0]
+      });
+    }
   }
 
   useEffect(() => {
@@ -43,7 +49,7 @@ export default function EventEditPage({ params }) {
   }, []);
 
 
-  const handleInputChange = (e) => {
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEvent((prev) => ({
       ...prev,
@@ -55,13 +61,12 @@ export default function EventEditPage({ params }) {
       setErrors({ ...errors, [name]: error.details[0].message });
     } else {
       const newErrors = { ...errors };
-      delete newErrors[name];
       setErrors(newErrors);
     }
   };
 
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate(schema, event);
     if(validationErrors) {
@@ -103,7 +108,7 @@ export default function EventEditPage({ params }) {
         placeholder="Description"
         name="description"
         className="shadow appearance-none border rounded w-[94%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mt-2"
-        rows="10"
+        rows={10}
         onChange={handleInputChange}
         value={event.description}
       >

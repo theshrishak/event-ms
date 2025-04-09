@@ -6,9 +6,9 @@ import { getEvents, deleteEvent } from '@/services/event';
 
 interface Event {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  date: string;
+  date: Date;
   location: string;
 }
 
@@ -18,9 +18,9 @@ export default function Home() {
   const [query, setQuery] = useState<string>("");
   const [event, setEvent] = useState<Event>({
     id: "",
-    name: "",
+    title: "",
     description: "",
-    date: "",
+    date: new Date(),
     location: ""
   });
 
@@ -36,7 +36,6 @@ export default function Home() {
       sortBy: 'id',
       query: query
     });
-    console.log(events);
     setRows(events);
   };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Joi from 'joi';
 
 import { createEvent } from '@/services/event';
@@ -27,7 +27,7 @@ export default function EventCreatePage() {
   const router = useRouter();
 
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEvent((prev) => ({
       ...prev,
@@ -39,13 +39,12 @@ export default function EventCreatePage() {
       setErrors({ ...errors, [name]: error.details[0].message });
     } else {
       const newErrors = { ...errors };
-      delete newErrors[name];
       setErrors(newErrors);
     }
   };
 
 
-  const handleSubmit = (e) => {
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate(schema, event);
     if(validationErrors) {
@@ -86,7 +85,7 @@ export default function EventCreatePage() {
         placeholder="Description"
         name="description"
         className="shadow appearance-none border rounded w-[94%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mt-2"
-        rows="10"
+        rows={10}
         onChange={handleInputChange}
         value={event.description}
       >

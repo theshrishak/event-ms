@@ -1,5 +1,6 @@
 "use server";
 import prisma from './prisma';
+import { Events, Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { currentUser } from '@clerk/nextjs/server';
 
@@ -7,6 +8,7 @@ export const createEvent = async (
     title: string, date: string, location: string, description: string
 ) => {
     const user = await currentUser();
+    if(!user) return;
     const userId = user.id;
     const event = await prisma.events.create({
         data: {
@@ -20,8 +22,8 @@ export const createEvent = async (
 };
 
 export const getEventById = async (
-    id: number
-) => {
+    id: string
+): Promise<Events | null> => {
     return prisma.events.findUnique({
         where: { id }
     });
@@ -42,6 +44,7 @@ export const getEvents = async (
     const sortBy = options.sortBy;
     const sortType = options.sortType ?? 'desc';
     const user = await currentUser();
+    if(!user) return [];
     const role = user['_raw']['public_metadata']?.role;
     if(!!role && role !== 'Admin') {
         filter = {
@@ -69,7 +72,7 @@ export const deleteEvent = async (
 };
 
 export const updateEvent = async (
-    eventId: number,
+    eventId: string,
     updateEvent: Prisma.EventsUpdateInput
 ) => {
     const updatedEvent = await prisma.events.update({
