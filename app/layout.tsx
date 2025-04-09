@@ -5,7 +5,8 @@ import {
   SignInButton,
   SignUpButton,
   SignedIn,
-  SignedOut
+  SignedOut,
+  UserButton
 } from '@clerk/nextjs';
 
 import "./globals.css";
@@ -41,7 +42,15 @@ export default function RootLayout({
             <SignUpButton />
           </SignedOut>
           <SignedIn>
-          {children}
+            <nav className="flex justify-between p-2">
+              <div>
+                <h1>Event Management System</h1>
+              </div>
+              <div className="flex">
+                <UserButton />
+              </div>
+            </nav>
+            {children}
           </SignedIn>
         </body>
       </html>

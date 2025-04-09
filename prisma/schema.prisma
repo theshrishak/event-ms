@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Event {
+model Events {
   id 	      String @id @default(cuid())
   title       String
   description String
