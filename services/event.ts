@@ -33,6 +33,7 @@ export const getEvents = async (
         limit?: number;
         page?: number;
         sortBy?: string;
+        query?: string;
         sortType?: 'asc' | 'desc'
     }
 ) => {

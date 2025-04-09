@@ -1,7 +1,5 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
-
 import { useEffect, useState } from 'react';
 
 import { getEvents, deleteEvent } from '@/services/event';
@@ -17,6 +15,7 @@ interface Event {
 export default function Home() {
   const [rows, setRows] = useState<Event[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
   const [event, setEvent] = useState<Event>({
     id: "",
     name: "",
@@ -34,8 +33,10 @@ export default function Home() {
     const events = await getEvents({}, {
       page: options.page,
       limit: 10,
-      sortBy: 'id'
+      sortBy: 'id',
+      query: query
     });
+    console.log(events);
     setRows(events);
   };
 
@@ -93,7 +94,9 @@ export default function Home() {
                 <div className="ml-3 mt-3 pb-2 bg-white">
                   <input
                     placeholder="Search for events"
+                    onChange={(e) => setQuery(e.target.value)}
                     className="shadow appearance-none border rounded w-[30%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2"
+
                   />
                   <a
                     href="/create"
