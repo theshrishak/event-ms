@@ -43,10 +43,10 @@ export default function RootLayout({
           </SignedOut>
           <SignedIn>
             <nav className="flex justify-between p-2">
-              <div>
+              <div className="ml-5 text-lg">
                 <h1>Event Management System</h1>
               </div>
-              <div className="flex">
+              <div className="flex mr-5">
                 <UserButton />
               </div>
             </nav>

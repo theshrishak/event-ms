@@ -14,7 +14,7 @@ interface EventEditPageProps {
 }
 
 export default function EventEditPage({ params }: EventEditPageProps) {
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string,string>>({});
   const [event, setEvent] = useState({
     title: "",
     date: "",
@@ -61,7 +61,9 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
       setErrors({ ...errors, [name]: error.details[0].message });
     } else {
       const newErrors = { ...errors };
-      setErrors(newErrors);
+      if(newErrors.hasOwnProperty(name)) {
+        delete newErrors[name];
+      }
     }
   };
 
@@ -81,40 +83,56 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
 
   return (
-    <form className="ml-5 p-2" onSubmit={handleSubmit}>
-      <input
-        placeholder="Title"
-        name="title"
-        className="shadow appearance-none border rounded w-[45%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mr-5"
-        onChange={handleInputChange}
-        value={event.title}
-      />
-      <input
-        placeholder="Date"
-        type="date"
-        name="date"
-        className="shadow appearance-none border rounded w-[45%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 ml-5"
-        onChange={handleInputChange}
-        value={event.date}
-      />
-      <input
-        placeholder="Location"
-        name="location"
-        className="shadow appearance-none border rounded w-[94%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mt-2"
-        onChange={handleInputChange}
-        value={event.location}
-      />
-      <textarea
-        placeholder="Description"
-        name="description"
-        className="shadow appearance-none border rounded w-[94%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mt-2"
-        rows={10}
-        onChange={handleInputChange}
-        value={event.description}
-      >
-      </textarea>
+    <form
+      className="mx-auto p-2 grid grid-cols-12 gap-4 w-[95%]"
+      onSubmit={handleSubmit}
+    >
+      <div className="col-span-6">
+        <input
+          placeholder="Title (*)"
+          name="title"
+          className="w-[100%] shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2"
+          onChange={handleInputChange}
+          value={event.title}
+        />
+        <span className="text-red-500 text-sm">{errors.title}</span>
+      </div>
+      <div className="col-span-6">
+        <input
+          placeholder="Date (*)"
+          type="date"
+          name="date"
+          className="w-[100%] shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2"
+          onChange={handleInputChange}
+          min={(new Date()).toISOString().split('T')[0]}
+          value={event.date}
+        />
+        <span className="text-red-500 text-sm">{errors.date}</span>
+      </div>
+      <div className="col-span-12">
+        <input
+          placeholder="Location (*)"
+          name="location"
+          className="w-[100%] shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mt-2"
+          onChange={handleInputChange}
+          value={event.location}
+        />
+        <span className="text-red-500 text-sm">{errors.location}</span>
+      </div>
+      <div className="col-span-12">
+        <textarea
+          placeholder="Description (*)"
+          name="description"
+          className="w-[100%] shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2 mt-2"
+          rows={10}
+          onChange={handleInputChange}
+          value={event.description}
+        >
+        </textarea>
+        <span className="text-red-500 text-sm">{errors.description}</span>
+      </div>
       <button
-        className="cursor-pointer bg-blue-600 mt-2 rounded text-white block p-2"
+        className="cursor-pointer bg-blue-600 mt-2 rounded text-white block p-2 w-[5em]"
         type="submit"
       >
         Edit
