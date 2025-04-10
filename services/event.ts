@@ -43,22 +43,42 @@ export const getEvents = async (
     const limit = options.limit ?? 30;
     const sortBy = options.sortBy;
     const sortType = options.sortType ?? 'desc';
+    const query = options.query ?? '';
     const user = await currentUser();
     if(!user) return [];
     const role = user['_raw']['public_metadata']?.role;
-    if(!!role && role !== 'Admin') {
+    if(!role || role !== 'Admin') {
         filter = {
             ...filter,
             userId: user['id']
         }
     }
     const events = await prisma.events.findMany({
-        where: filter,
+        where: {
+            ...filter,
+            OR: [
+                { title: { 
+                    contains: query ,
+                    mode: 'insensitive'
+                } },
+                { location: { 
+                    contains: query ,
+                    mode: 'insensitive'
+                } },
+                { description: { 
+                    contains: query,
+                    mode: 'insensitive'
+                } },
+            ]
+        },
         skip: page * limit,
         take: limit,
         orderBy: !!sortBy ? { [sortBy]: sortType } : undefined
     });
-    return events;
+    return {
+        "results": events,
+        "total": await prisma.events.count()
+    };
 };
 
 export const deleteEvent = async (

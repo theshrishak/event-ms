@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 
 import { getEvents, deleteEvent } from '@/services/event';
 
+import { debounce } from '@/utils/debounce';
+
+
 interface Event {
   id: string;
   title: string;
@@ -11,6 +14,8 @@ interface Event {
   date: Date;
   location: string;
 }
+
+const LIMIT = 10;
 
 export default function Home() {
   const [rows, setRows] = useState<Event[]>([]);
@@ -24,24 +29,24 @@ export default function Home() {
     location: ""
   });
 
-  const [options, setOptions] = useState({
-    page: 0,
-    total: 30
-  });
+  const [page, setPage] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
 
-  const retrieveEvents = async ()  => {
+  const retrieveEvents = async (q: string = '')  => {
     const events = await getEvents({}, {
-      page: options.page,
-      limit: 10,
+      page: page,
+      limit: LIMIT,
       sortBy: 'id',
-      query: query
+      query: q
     });
-    setRows(events);
+    setRows(events.results);
+    setTotal(events.total);
   };
+  const debouncedRetrieveEvents= debounce(retrieveEvents, 500);
 
   useEffect(() => {
     retrieveEvents();
-  }, [options]);
+  }, [page]);
 
   return (
     <>
@@ -93,7 +98,10 @@ export default function Home() {
                 <div className="ml-3 mt-3 pb-2 bg-white">
                   <input
                     placeholder="Search for events"
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                      setPage(0);
+                      debouncedRetrieveEvents(e.target.value);
+                    }}
                     className="shadow appearance-none border rounded w-[30%] text-gray-700 leading-tight focus:outline-none focus:shadow-outline p-2"
 
                   />
@@ -107,6 +115,9 @@ export default function Home() {
                     className="text-xs text-gray-700 uppercase bg-gray-50/50"
                   >
                   <tr>
+                    <th scope="col" className="px-6 py-3">
+                      S.N
+                    </th>
                     <th scope="col" className="px-6 py-3">
                       Name
                     </th>
@@ -127,8 +138,11 @@ export default function Home() {
                       key={idx}
                       className="bg-white border-b border-gray-50 hover:bg-gray-50/50"
                     >
+                      <td className="px-6 py-4">
+                        {idx+1}
+                      </td>
                       <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
-                        <div className="pl-3 text-left">
+                        <div className="text-left">
                           <div className="text-base font-semibold">{row.title}</div>
                           <div className="font-normal text-gray-500">{row.description}</div>
                         </div>  
@@ -162,27 +176,31 @@ export default function Home() {
                     <div className="text-gray-500 font-medium">
                       <p>
                         Showing 
-                        <strong className="text-gray-600 mx-1">1</strong> to 
-                        <strong className="text-gray-600 mx-1">10</strong> of
-                        <strong className="text-gray-600 mx-1">20</strong> result
+                        <strong className="text-gray-600 mx-1">
+                        {(page * LIMIT) + 1}
+                        </strong> to 
+                        <strong className="text-gray-600 mx-1">
+                          {((page * LIMIT) + LIMIT) > total ? total : (page * LIMIT) + LIMIT}
+                        </strong> of
+                        <strong className="text-gray-600 mx-1">{total}</strong> result
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-3">
                       <button
-                        className="btn text-gray-500 border-gray-100 hover:bg-gray-50/50 hover:text-gray-700"
+                        className="cursor-pointer text-gray-500 border-gray-100 hover:bg-gray-50/50 hover:text-gray-700"
                         onClick={() =>  {
-                            if(options.page !== 0) {
-                              setOptions({...options, page: options.page-1})
-                            }
+                              setPage(page-1);
                         }}
+                        disabled={page-1 < 0}
                       >
                         Previous
                       </button>
                       <button
-                        className="btn text-gray-500 border-gray-100 hover:bg-gray-50/50 hover:text-gray-700"
+                        className="cursor-pointer text-gray-500 border-gray-100 hover:bg-gray-50/50 hover:text-gray-700"
                         onClick={() =>  {
-                            setOptions({...options, page: options.page+1})
+                            setPage(page+1);
                         }}
+                        disabled={(page+1) * LIMIT >= total}
                       >
                         Next
                       </button>
