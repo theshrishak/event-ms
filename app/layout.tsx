@@ -38,8 +38,17 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <SignedOut>
-            <SignInButton />
-            <SignUpButton />
+            <div
+              className="shadow-xl flex flex-col mx-auto sm:w-[40%] xl:w-[20%] mt-[10%] p-5"
+            >
+              <h1 className="text-center text-2xl font-bold my-3">Welcome to EMS</h1>
+              <div className="cursor-pointer rounded w-[50%] text-white bg-blue-500  hover:bg-blue-400 p-3 mx-auto">
+                <SignInButton />
+              </div>
+              <div className="cursor-pointer rounded w-[50%] text-white bg-blue-500 hover:bg-blue-400 p-3 mx-auto mt-2">
+                <SignUpButton />
+              </div>
+            </div>
           </SignedOut>
           <SignedIn>
             <nav className="flex justify-between p-2">
