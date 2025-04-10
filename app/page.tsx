@@ -20,7 +20,6 @@ const LIMIT = 10;
 export default function Home() {
   const [rows, setRows] = useState<Event[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>("");
   const [event, setEvent] = useState<Event>({
     id: "",
     title: "",

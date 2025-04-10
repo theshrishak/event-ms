@@ -29,6 +29,11 @@ export const getEventById = async (
     });
 };
 
+interface EventList {
+    results: Events[]
+    total: number
+}
+
 export const getEvents = async (
     filter: object,
     options: {
@@ -38,14 +43,14 @@ export const getEvents = async (
         query?: string;
         sortType?: 'asc' | 'desc'
     }
-) => {
+): Promise<EventList>  => {
     const page = options.page ?? 1;
     const limit = options.limit ?? 30;
     const sortBy = options.sortBy;
     const sortType = options.sortType ?? 'desc';
     const query = options.query ?? '';
     const user = await currentUser();
-    if(!user) return [];
+    if(!user) return { results: [], total: 0};
     const role = user['_raw']['public_metadata']?.role;
     if(!role || role !== 'Admin') {
         filter = {
