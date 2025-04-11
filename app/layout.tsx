@@ -41,9 +41,25 @@ export default function RootLayout({
             <div
               className="shadow-xl flex flex-col mx-auto sm:w-[40%] xl:w-[20%] mt-[10%] p-5"
             >
-                <h1 className="text-center text-2xl font-bold my-3">Welcome to EMS</h1>
-                <SignInButton className="cursor-pointer rounded w-[50%] text-white bg-blue-500  hover:bg-blue-400 p-3 mx-auto"/>
-                <SignUpButton className="cursor-pointer rounded w-[50%] text-white bg-blue-500 hover:bg-blue-400 p-3 mx-auto mt-2"/>
+                <h1
+                  className="text-center text-2xl font-bold my-3"
+                >
+                  Welcome to EMS
+                </h1>
+                <SignInButton>
+                  <button
+                    className="cursor-pointer rounded w-[50%] text-white bg-blue-500  hover:bg-blue-400 p-3 mx-auto"
+                  >
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton>
+                  <button
+                    className="cursor-pointer rounded w-[50%] text-white bg-blue-500 hover:bg-blue-400 p-3 mx-auto mt-2"
+                  >
+                    Sign Up
+                  </button>
+                </SignUpButton>
             </div>
           </SignedOut>
           <SignedIn>
