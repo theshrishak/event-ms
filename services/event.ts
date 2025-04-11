@@ -58,31 +58,32 @@ export const getEvents = async (
             userId: user['id']
         }
     }
+    filter = {
+        ...filter,
+        OR: [
+            { title: { 
+                contains: query ,
+                mode: 'insensitive'
+            } },
+            { location: { 
+                contains: query ,
+                mode: 'insensitive'
+            } },
+            { description: { 
+                contains: query,
+                mode: 'insensitive'
+            } },
+        ]
+    }
     const events = await prisma.events.findMany({
-        where: {
-            ...filter,
-            OR: [
-                { title: { 
-                    contains: query ,
-                    mode: 'insensitive'
-                } },
-                { location: { 
-                    contains: query ,
-                    mode: 'insensitive'
-                } },
-                { description: { 
-                    contains: query,
-                    mode: 'insensitive'
-                } },
-            ]
-        },
+        where: filter,
         skip: page * limit,
         take: limit,
         orderBy: !!sortBy ? { [sortBy]: sortType } : undefined
     });
     return {
         "results": events,
-        "total": await prisma.events.count()
+        "total": await prisma.events.count({ where: filter })
     };
 };
 

@@ -176,7 +176,7 @@ export default function Home() {
                       <p>
                         Showing 
                         <strong className="text-gray-600 mx-1">
-                        {(page * LIMIT) + 1}
+                        {!total ? total : (page * LIMIT) + 1}
                         </strong> to 
                         <strong className="text-gray-600 mx-1">
                           {((page * LIMIT) + LIMIT) > total ? total : (page * LIMIT) + LIMIT}
